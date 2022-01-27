@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const emailService = require('../services/mail')
 const templates = require('../templates/email_template')
 require('dotenv').config()
-// access config var
+
 const getToken = (username) =>
   jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_LIFE,
