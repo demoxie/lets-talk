@@ -1,4 +1,5 @@
 let express = require('express')
+const auth = require('../middleware/auth')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const {
@@ -26,8 +27,11 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions)
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 // User routes
-
-router.post('/api/v1/user', user_controller.createUser)
+router.get('/api/v1/account-verification/:token', [
+  auth.verifyApiKey,
+  auth.verifyAccountToken,
+])
+router.post('/api/v1/user', [auth.verifyApiKey], user_controller.createUser)
 router.post('/api/v1/login', user_controller.loginUser)
 /**
  * @swagger
@@ -38,7 +42,11 @@ router.post('/api/v1/login', user_controller.loginUser)
  *      '200':
  *        description: A successful response
  */
-router.get('/api/v1/users', user_controller.getAllUsers)
+router.get(
+  '/api/v1/users',
+  [auth.verifyApiKey, auth.verifyToken],
+  user_controller.getAllUsers,
+)
 /**
  * @swagger
  * /api/v1/users/:userId:
@@ -48,7 +56,11 @@ router.get('/api/v1/users', user_controller.getAllUsers)
  *      '200':
  *        description: A successful response
  */
-router.get('/api/v1/users/:userId', user_controller.getUser)
+router.get(
+  '/api/v1/users/:userId',
+  [auth.verifyApiKey, auth.verifyToken],
+  user_controller.getUser,
+)
 /**
  * @swagger
  * /api/v1/users/update-user/:userId:
@@ -66,7 +78,11 @@ router.get('/api/v1/users/:userId', user_controller.getUser)
  *      '201':
  *        description: Successfully created user
  */
-router.put('/api/v1/users/update-user/:userId', user_controller.updateUser)
+router.put(
+  '/api/v1/users/update-user/:userId',
+  [auth.verifyApiKey, auth.verifyToken],
+  user_controller.updateUser,
+)
 
 /**
  * @swagger
@@ -104,7 +120,11 @@ router.put('/api/v1/users/update-user/:userId', user_controller.updateUser)
  *        default:
  *          description: Unexpected error
  */
-router.delete('/api/v1/users/delete-user/:userId', user_controller.deleteUser)
+router.delete(
+  '/api/v1/users/delete-user/:userId',
+  [auth.verifyApiKey, auth.verifyToken],
+  user_controller.deleteUser,
+)
 
 // Post routes
 /**
@@ -116,7 +136,11 @@ router.delete('/api/v1/users/delete-user/:userId', user_controller.deleteUser)
  *      '200':
  *        description: A successful response
  */
-router.post('/api/v1/post', post_controller.createPost)
+router.post(
+  '/api/v1/post',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.createPost,
+)
 /**
  * @swagger
  * /api/v1/posts:
@@ -126,7 +150,11 @@ router.post('/api/v1/post', post_controller.createPost)
  *      '200':
  *        description: A successful response
  */
-router.get('/api/v1/posts', post_controller.getAllPosts)
+router.get(
+  '/api/v1/posts',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.getAllPosts,
+)
 /**
  * @swagger
  * /api/v1/posts/:postId:
@@ -136,7 +164,11 @@ router.get('/api/v1/posts', post_controller.getAllPosts)
  *      '200':
  *        description: A successful response
  */
-router.get('/api/v1/posts/:postId', post_controller.getPost)
+router.get(
+  '/api/v1/posts/:postId',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.getPost,
+)
 /**
  * @swagger
  * /api/v1/posts/update-post/:userId:
@@ -146,7 +178,11 @@ router.get('/api/v1/posts/:postId', post_controller.getPost)
  *      '200':
  *        description: A successful response
  */
-router.put('/api/v1/posts/update-post/:postId', post_controller.updatePost)
+router.put(
+  '/api/v1/posts/update-post/:postId',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.updatePost,
+)
 /**
  * @swagger
  * /api/v1/posts/delete-post/:postId:
@@ -156,21 +192,43 @@ router.put('/api/v1/posts/update-post/:postId', post_controller.updatePost)
  *      '200':
  *        description: A successful response
  */
-router.delete('/api/v1/posts/delete-post/:postId', post_controller.deletePost)
+router.delete(
+  '/api/v1/posts/delete-post/:postId',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.deletePost,
+)
 
-router.put('/api/v1/posts/like-post/:postId', post_controller.likePost)
+router.put(
+  '/api/v1/posts/like-post/:postId',
+  [auth.verifyApiKey, auth.verifyToken],
+  post_controller.likePost,
+)
 
 // Comments
-router.post('/api/v1/post/comment', comment_controller.createComment)
+router.post(
+  '/api/v1/post/comment',
+  [auth.verifyApiKey, auth.verifyToken],
+  comment_controller.createComment,
+)
 router.get(
   '/api/v1/post/:postId/comments',
+  [auth.verifyApiKey, auth.verifyToken],
   comment_controller.getAllCommentsForAPost,
 )
 
-router.get('/api/v1/post/comment/:commentId', comment_controller.getComment)
-router.put('/api/v1/post/comment/:commentId', comment_controller.likeComment)
+router.get(
+  '/api/v1/post/comment/:commentId',
+  [auth.verifyApiKey, auth.verifyToken],
+  comment_controller.getComment,
+)
+router.put(
+  '/api/v1/post/comment/:commentId',
+  [auth.verifyApiKey, auth.verifyToken],
+  comment_controller.likeComment,
+)
 router.put(
   '/api/v1/post/commenting/comment/:commentId',
+  [auth.verifyApiKey, auth.verifyToken],
   comment_controller.commentOnAComment,
 )
 // router.post('/api/v1/post/comment', comment_controller.createComment)

@@ -13,8 +13,16 @@ let User = Schema({
   },
   username: {
     type: String,
-    required: [true, 'username is required'],
-    unique: true,
+    unique: [true, 'email already exists in database!'],
+    lowercase: true,
+    trim: true,
+    required: [true, 'email not provided'],
+    validate: {
+      validator: function (v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+      },
+      message: '{VALUE} is not a valid email!',
+    },
   },
   password: { type: String, required: [true, 'password is required'] },
   dateOfBirth: {
@@ -23,6 +31,7 @@ let User = Schema({
     trim: true,
   },
   gender: { type: String, required: [true, 'gender is required'] },
+
   confirmation: { type: String, default: '' },
   enabled: { type: Boolean, default: false },
   posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
